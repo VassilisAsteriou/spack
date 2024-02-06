@@ -73,14 +73,8 @@ class Libevent(AutotoolsPackage):
 
         return configure_args
 
-    def patch(self):
-        if self.spec.satisfies("%nvhpc"):
-            # Remove incompatible compiler flags
-            filter_file(" -Wmissing-declarations", "", "configure")
-            filter_file(" -Wbad-function-cast", "", "configure")
-            filter_file(" -Wno-unused-parameter", "", "configure")
-            filter_file(" -Wmissing-field-initializers", "", "configure")
-            filter_file(" -Waddress", "", "configure")
-            filter_file(" -Wnormalized=id", "", "configure")
-            filter_file(" -Woverride-init", "", "configure")
-            filter_file(" -Wlogical-op", "", "configure")
+    def flag_handler(self, name, flags):
+        if name == "cflags":
+            if self.spec.satisfies("%nvhpc"):
+                flags.append("-noswitcherror")
+        return (flags, None, None)
